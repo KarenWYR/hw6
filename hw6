@@ -1,0 +1,173 @@
+var ballSize = 20
+var ballSize2 = 5
+var ballX = 300
+var ballY = 200
+var ballXSpeed = 3
+var ballYSpeed = -4
+
+var playerSpeed = 8
+var playerHeight = 100
+var playerWidth = 15
+var playerL = 200
+var playerR = 200
+var scoreL = 0
+var scoreR = 0
+
+var glasshitting
+
+function preload() {
+  soundFormats("wav");
+  glasshitting = loadSound("glasshitting.wav");
+}
+
+function setup() {
+  createCanvas(750, 550);
+}
+
+function draw() {
+  background(236, 87, 121);
+
+
+
+  //middle line
+  stroke(255);
+  strokeWeight(2)
+  line(width / 2, 0, width / 2, height / 20);
+  line(width / 2, height / 10, width / 2, height / 20 + height / 10);
+  line(width / 2, height / 5, width / 2, height / 4);
+  line(width / 2, height / 5 + height / 10, width / 2, height / 5 + height / 10 + height / 20);
+  line(width / 2, height / 5 + height / 5, width / 2, height / 5 + height / 5 + height / 20);
+  line(width / 2, height / 2, width / 2, height / 2 + height / 20);
+  line(width / 2, height / 2 + height / 10, width / 2, height / 2 + height / 10 + height / 20);
+  line(width / 2, height / 2 + height / 5, width / 2, height / 2 + height / 5 + height / 20);
+  line(width / 2, height / 2 + height / 5 + height / 10, width / 2, height / 2 + height / 5 + height / 10 + height / 20);
+  line(width / 2, height - height / 10, width / 2, height - height / 20);
+  line(width / 2, height - 5, width / 2, height);
+
+
+
+  // Render the screen
+  noStroke();
+  fill(249, 177, 192);
+  ellipse(ballX, ballY, ballSize); // ball or puck
+  fill(255);
+  ellipse(ballX - 3, ballY - 3, ballSize2);
+  fill(249, 177, 192);
+  rect(0, playerL, playerWidth, playerHeight); // left player
+  rect(width - playerWidth, playerR, playerWidth, playerHeight); // right player
+  stroke(255);
+  line(playerWidth - 5, playerL + 8, playerWidth - 5, playerL + 25);
+  line(width - playerWidth + 5, playerR + 75, width - playerWidth + 5, playerR + 92);
+
+
+
+  //score
+  fill(255)
+  textSize(60);
+  text(scoreL, 175, 70);
+  text(scoreR, 550, 70);
+
+
+  // User Input
+
+  // 'W' key
+  if (keyIsDown(87)) {
+    playerL = playerL - playerSpeed;
+  }
+
+  // 'S' key
+  if (keyIsDown(83)) {
+    playerL = playerL + playerSpeed;
+  }
+
+  // UP key
+  if (keyIsDown(UP_ARROW)) {
+    playerR = playerR - playerSpeed;
+  }
+
+  // DOWN key
+  if (keyIsDown(DOWN_ARROW)) {
+    playerR = playerR + playerSpeed;
+  }
+
+
+  // Program Logic
+
+  // Keep playerL on the screen
+  if (playerL < 0) {
+    playerL = 0;
+  }
+  if (playerL > height - playerHeight) {
+    playerL = height - playerHeight;
+  }
+
+  // Keep playerR on the screen
+  if (playerR < 0) {
+    playerR = 0;
+  }
+  if (playerR > height - playerHeight) {
+    playerR = height - playerHeight;
+  }
+
+  // Move the ball
+  ballX = ballX + ballXSpeed;
+  ballY = ballY + ballYSpeed;
+
+
+  // Bounce ball off top and bottom
+  if (ballY < 0) {
+    ballY = 0;
+    ballYSpeed = -ballYSpeed;
+  }
+  if (ballY > height) {
+    ballY = height;
+    ballYSpeed = -ballYSpeed;
+  }
+
+  // Check if ball is bouncing off right player
+  if (ballX > width - playerWidth && ballY > playerR && ballY < playerR + playerHeight) {
+    ballXSpeed = -ballXSpeed
+    ballX = width - playerWidth
+    glasshitting.play()
+  }
+
+  // Check if ball is off the right hand side of screen
+  // Check if playerL scored
+  if (ballX > width) {
+    scoreL = scoreL + 1
+    // ballX = width / 2
+    // ballY = height / 2
+    ballX = width / 2
+    ballY = random(0, height);
+    ballXSpeed = -ballXSpeed
+  }
+
+  // Check if ball is bouncing off left player
+  if (ballX < playerWidth && ballY > playerL && ballY < playerL + playerHeight) {
+    ballXSpeed = -ballXSpeed
+    ballX = playerWidth
+    glasshitting.play()
+  }
+
+  // Check if ball is off the left hand side of screen
+  // Check if playerR scored
+  if (ballX < 0) {
+    scoreR = scoreR + 1
+    ballX = width / 2
+    ballY = random(0, height);
+    ballXSpeed = -ballXSpeed
+  }
+
+  //ball stops when left score reach 5
+  if (scoreL > 4) {
+    ballXSpeed = 0;
+    ballYSpeed = 0;
+  }
+
+  //ball stops when right score reach 5
+  if (scoreR > 4) {
+    ballXSpeed = 0;
+    ballYSpeed = 0;
+  }
+
+}
